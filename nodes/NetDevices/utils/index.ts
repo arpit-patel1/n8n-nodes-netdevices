@@ -5,6 +5,7 @@ export { BaseConnection, DeviceCredentials, CommandResult } from './base-connect
 export { CiscoConnection, CiscoIOSXRConnection, CiscoSG300Connection } from './cisco';
 export { JuniperConnection } from './juniper';
 export { LinuxConnection } from './linux';
+export { PaloAltoConnection } from './paloalto';
 
 // Connection dispatcher and utilities
 export { 

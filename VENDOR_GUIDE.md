@@ -17,6 +17,9 @@ nodes/NetDevices/utils/
 ├── juniper/                   # Juniper vendor implementation
 │   ├── juniper-connection.ts
 │   └── index.ts
+├── paloalto/                  # Palo Alto Networks implementation
+│   ├── paloalto-connection.ts
+│   └── index.ts
 └── linux/                     # Linux vendor implementation
     ├── linux-connection.ts
     └── index.ts
@@ -302,17 +305,34 @@ The project includes comprehensive Cisco platform support with specialized class
 - **Features**: Small business switch management
 - **Use Cases**: Small business networking equipment
 
+### PaloAltoConnection (paloalto-connection.ts)
+- **Supports**: PAN-OS firewalls, PA-VM virtual firewalls
+- **Features**: Operational and configuration modes, commit-based configuration
+- **Use Cases**: Enterprise firewalls, security appliances
+- **Special Handling**: 
+  - Operational mode detection and management
+  - Configuration mode with commit workflow
+  - Shell mode support for advanced operations
+
 ## Example Vendors to Add
 
 Some vendors that could be added following this pattern:
 
 - **Arista EOS**: Similar to Cisco IOS
 - **HP/HPE**: ProCurve and Comware variants
-- **Palo Alto**: PAN-OS firewalls
 - **F5**: BIG-IP load balancers
 - **Fortinet**: FortiGate firewalls
 - **Mikrotik**: RouterOS devices
 - **Extreme Networks**: Various switch families
+
+## Implemented Vendors
+
+The following vendors are currently supported:
+
+- **Cisco**: IOS, IOS-XE, IOS-XR, NX-OS, ASA, SG300
+- **Juniper**: JunOS, SRX
+- **Palo Alto Networks**: PAN-OS, PA-VM
+- **Linux**: Generic Linux servers and appliances
 
 ## References
 

@@ -24,6 +24,8 @@ A TypeScript-based n8n custom node that provides Netmiko-like functionality for 
 ### Other Vendors
 - **Juniper JunOS**: Juniper routers and switches
 - **Juniper SRX**: Juniper SRX firewall series
+- **Palo Alto PAN-OS**: Palo Alto Networks firewalls
+- **Palo Alto PA-VM**: Palo Alto Networks virtual firewalls
 - **Linux**: Linux servers and network appliances
 - **Generic**: Basic SSH connection for other devices
 
@@ -259,6 +261,36 @@ These examples are safe to use for testing and demo purposes. Each example shows
 }
 ```
 
+#### Palo Alto PAN-OS
+**Add Loopback Interface**
+```json
+{
+  "operation": "sendConfig",
+  "configCommands": "set interfaces loopback.123 description \"n8n test loopback\"\nset interfaces loopback.123 ip 10.123.123.123/32"
+}
+```
+**Remove Loopback Interface**
+```json
+{
+  "operation": "sendConfig",
+  "configCommands": "delete interfaces loopback.123"
+}
+```
+**Add Dummy Zone**
+```json
+{
+  "operation": "sendConfig",
+  "configCommands": "set zones n8n-test-zone"
+}
+```
+**Remove Dummy Zone**
+```json
+{
+  "operation": "sendConfig",
+  "configCommands": "delete zones n8n-test-zone"
+}
+```
+
 #### Linux
 **Add Dummy Network Interface (iproute2)**
 ```json
@@ -333,6 +365,9 @@ nodes/NetDevices/utils/
 ├── juniper/                   # Juniper vendor implementation
 │   ├── juniper-connection.ts
 │   └── index.ts
+├── paloalto/                  # Palo Alto Networks implementation
+│   ├── paloalto-connection.ts
+│   └── index.ts
 └── linux/                     # Linux vendor implementation
     ├── linux-connection.ts
     └── index.ts
@@ -345,6 +380,7 @@ nodes/NetDevices/utils/
 - **CiscoIOSXRConnection**: Cisco IOS-XR specific handling (commit-based config)
 - **CiscoSG300Connection**: Cisco SG300 series specific handling
 - **JuniperConnection**: Juniper-specific handling (CLI mode, commit)
+- **PaloAltoConnection**: Palo Alto Networks handling (operational/config modes, commit)
 - **LinuxConnection**: Linux server management
 - **ConnectionDispatcher**: Factory for creating appropriate connection types
 

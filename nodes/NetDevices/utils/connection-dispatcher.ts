@@ -2,6 +2,7 @@ import { BaseConnection, DeviceCredentials } from './base-connection';
 import { CiscoConnection, CiscoIOSXRConnection, CiscoSG300Connection } from './cisco';
 import { JuniperConnection } from './juniper';
 import { LinuxConnection } from './linux';
+import { PaloAltoConnection } from './paloalto';
 
 export type SupportedDeviceType = 
     | 'cisco_ios'
@@ -12,6 +13,8 @@ export type SupportedDeviceType =
     | 'cisco_sg300'
     | 'juniper_junos'
     | 'juniper_srx'
+    | 'paloalto_panos'
+    | 'paloalto_pa-vm'
     | 'linux'
     | 'generic';
 
@@ -29,6 +32,8 @@ const CONNECTION_CLASS_MAPPING: ConnectionClassMapping = {
     'cisco_sg300': CiscoSG300Connection,
     'juniper_junos': JuniperConnection,
     'juniper_srx': JuniperConnection,
+    'paloalto_panos': PaloAltoConnection,
+    'paloalto_pa-vm': PaloAltoConnection,
     'linux': LinuxConnection,
     'generic': BaseConnection
 };
@@ -84,6 +89,8 @@ export class ConnectionDispatcher {
             'cisco_sg300': 'Cisco SG300',
             'juniper_junos': 'Juniper JunOS',
             'juniper_srx': 'Juniper SRX',
+            'paloalto_panos': 'Palo Alto PAN-OS',
+            'paloalto_pa-vm': 'Palo Alto PA-VM',
             'linux': 'Linux Server',
             'generic': 'Generic SSH'
         };
@@ -138,6 +145,16 @@ export class ConnectionDispatcher {
                 description: 'Juniper SRX firewalls'
             },
             {
+                name: 'Palo Alto PAN-OS',
+                value: 'paloalto_panos',
+                description: 'Palo Alto Networks firewalls (PAN-OS)'
+            },
+            {
+                name: 'Palo Alto PA-VM',
+                value: 'paloalto_pa-vm',
+                description: 'Palo Alto Networks virtual firewalls'
+            },
+            {
                 name: 'Linux Server',
                 value: 'linux',
                 description: 'Linux servers and appliances'
@@ -190,6 +207,15 @@ export class ConnectionDispatcher {
                     return 'juniper_srx';
                 } else {
                     return 'juniper_junos';
+                }
+            }
+            
+            // Palo Alto detection patterns
+            if (output.includes('palo alto') || output.includes('pan-os') || output.includes('pa-')) {
+                if (output.includes('vm') || output.includes('virtual')) {
+                    return 'paloalto_pa-vm';
+                } else {
+                    return 'paloalto_panos';
                 }
             }
             
