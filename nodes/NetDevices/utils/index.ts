@@ -10,6 +10,7 @@ export { CienaSaosConnection } from './ciena';
 export { FortinetConnection } from './fortinet';
 export { EricssonConnection, EricssonMinilinkConnection } from './ericsson';
 export { VyosConnection } from './vyos';
+export { HuaweiConnection } from './huawei';
 
 // Jump host connection
 export { JumpHostConnection } from './jump-host-connection';
