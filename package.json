@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-netdevices",
-  "version": "1.0.57",
+  "version": "1.0.58",
   "description": "n8n node to interact with network devices (Cisco, Juniper, Palo Alto PAN-OS, Fortinet FortiGate, Ciena SAOS, Linux, etc.)",
   "keywords": [
     "n8n-community-node-package",
