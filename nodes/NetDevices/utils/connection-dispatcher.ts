@@ -8,6 +8,7 @@ import { FortinetConnection } from './fortinet';
 import { EricssonConnection, EricssonMinilinkConnection } from './ericsson';
 import { DeviceSpecificJumpHostConnection } from './device-specific-jump-host-connection';
 import { VyosConnection } from './vyos';
+import { HuaweiConnection } from './huawei';
 
 export type SupportedDeviceType =
     | 'cisco_ios'
@@ -25,7 +26,8 @@ export type SupportedDeviceType =
     | 'ericsson_mltn'
     | 'linux'
     | 'generic'
-    | 'vyos';
+    | 'vyos'
+    | 'huawei_vrp';
 
 export interface ConnectionClassMapping {
     [key: string]: typeof BaseConnection;
@@ -49,6 +51,7 @@ const CONNECTION_CLASS_MAPPING: ConnectionClassMapping = {
     'linux': LinuxConnection,
     'generic': BaseConnection,
     'vyos': VyosConnection,
+    'huawei_vrp': HuaweiConnection,
 };
 
 export class ConnectionDispatcher {
@@ -117,6 +120,7 @@ export class ConnectionDispatcher {
             'linux': 'Linux Server',
             'generic': 'Generic SSH',
             'vyos': 'VyOS',
+            'huawei_vrp': 'Huawei VRP',
         };
         
         return displayNames[deviceType.toLowerCase()] || deviceType;
@@ -207,7 +211,12 @@ export class ConnectionDispatcher {
                 name: 'VyOS',
                 value: 'vyos',
                 description: 'VyOS routers'
-            }
+            },
+            {
+                name: 'Huawei VRP (NE series)',
+                value: 'huawei_vrp',
+                description: 'Huawei NE/AR/S series running VRP (incl. NE8000)',
+              },
         ];
     }
 
@@ -286,6 +295,15 @@ export class ConnectionDispatcher {
                 output.includes('$') || output.includes('~')) {
                 return 'linux';
             }
+
+            if (
+                output.includes('huawei') ||
+                output.includes('vrp') ||
+                output.includes('versatile routing platform') ||
+                output.includes('ne8000')
+              ) {
+                return 'huawei_vrp';
+              }
             
             return null; // Couldn't detect
             

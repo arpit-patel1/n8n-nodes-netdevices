@@ -31,6 +31,7 @@ The node supports a wide variety of network operating systems across multiple ve
 | **Ericsson** | `Ericsson IPOS` | Ericsson IPOS-based devices. |
 | | `Ericsson MiniLink`| Ericsson's microwave radio systems. |
 | **VyOS** | `VyOS` | Open-source router and firewall platform. |
+| **Huawei** | `Huawei VRP` | Huawei routers |
 | **Linux** | `Linux` | Standard Linux servers and network appliances. |
 | **Generic** | `Generic` | A basic SSH connection for other compatible devices. |
 
