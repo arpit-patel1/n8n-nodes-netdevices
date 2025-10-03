@@ -213,9 +213,9 @@ export class ConnectionDispatcher {
                 description: 'VyOS routers'
             },
             {
-                name: 'Huawei VRP (NE series)',
+                name: 'Huawei VRP (NE Series)',
                 value: 'huawei_vrp',
-                description: 'Huawei NE/AR/S series running VRP (incl. NE8000)',
+                description: 'Huawei NE/AR/S series running VRP (incl. NE8000).',
               },
         ];
     }
