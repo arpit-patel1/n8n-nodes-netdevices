@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-netdevices",
-  "version": "1.0.60",
+  "version": "1.0.61",
   "description": "n8n node to interact with network devices (Cisco, Arista, Juniper, HP, Aruba, Ubiquiti, Palo Alto, Fortinet, and more across data center, campus, and edge)",
   "keywords": [
     "n8n-community-node-package",
