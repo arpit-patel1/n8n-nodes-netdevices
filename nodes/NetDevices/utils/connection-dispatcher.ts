@@ -9,6 +9,9 @@ import { EricssonConnection, EricssonMinilinkConnection } from './ericsson';
 import { DeviceSpecificJumpHostConnection } from './device-specific-jump-host-connection';
 import { VyosConnection } from './vyos';
 import { HuaweiConnection } from './huawei';
+import { AristaConnection } from './arista';
+import { HPProcurveConnection, ArubaOsConnection, ArubaAosCxConnection } from './hp';
+import { UbiquitiEdgeSwitchConnection, UbiquitiEdgeRouterConnection, UbiquitiUnifiSwitchConnection } from './ubiquiti';
 
 export type SupportedDeviceType =
     | 'cisco_ios'
@@ -27,7 +30,14 @@ export type SupportedDeviceType =
     | 'linux'
     | 'generic'
     | 'vyos'
-    | 'huawei_vrp';
+    | 'huawei_vrp'
+    | 'arista_eos'
+    | 'hp_procurve'
+    | 'aruba_os'
+    | 'aruba_aoscx'
+    | 'ubiquiti_edgeswitch'
+    | 'ubiquiti_edgerouter'
+    | 'ubiquiti_unifi';
 
 export interface ConnectionClassMapping {
     [key: string]: typeof BaseConnection;
@@ -52,6 +62,13 @@ const CONNECTION_CLASS_MAPPING: ConnectionClassMapping = {
     'generic': BaseConnection,
     'vyos': VyosConnection,
     'huawei_vrp': HuaweiConnection,
+    'arista_eos': AristaConnection,
+    'hp_procurve': HPProcurveConnection,
+    'aruba_os': ArubaOsConnection,
+    'aruba_aoscx': ArubaAosCxConnection,
+    'ubiquiti_edgeswitch': UbiquitiEdgeSwitchConnection,
+    'ubiquiti_edgerouter': UbiquitiEdgeRouterConnection,
+    'ubiquiti_unifi': UbiquitiUnifiSwitchConnection,
 };
 
 export class ConnectionDispatcher {
@@ -121,6 +138,13 @@ export class ConnectionDispatcher {
             'generic': 'Generic SSH',
             'vyos': 'VyOS',
             'huawei_vrp': 'Huawei VRP',
+            'arista_eos': 'Arista EOS',
+            'hp_procurve': 'HP ProCurve',
+            'aruba_os': 'Aruba OS (Mobility Controllers)',
+            'aruba_aoscx': 'Aruba AOS-CX',
+            'ubiquiti_edgeswitch': 'Ubiquiti EdgeSwitch',
+            'ubiquiti_edgerouter': 'Ubiquiti EdgeRouter',
+            'ubiquiti_unifi': 'Ubiquiti UniFi Switch',
         };
         
         return displayNames[deviceType.toLowerCase()] || deviceType;
@@ -216,7 +240,42 @@ export class ConnectionDispatcher {
                 name: 'Huawei VRP (NE Series)',
                 value: 'huawei_vrp',
                 description: 'Huawei NE/AR/S series running VRP (incl. NE8000).',
-              },
+            },
+            {
+                name: 'Arista EOS',
+                value: 'arista_eos',
+                description: 'Arista EOS switches (data center)',
+            },
+            {
+                name: 'HP ProCurve',
+                value: 'hp_procurve',
+                description: 'HP ProCurve switches',
+            },
+            {
+                name: 'Aruba OS',
+                value: 'aruba_os',
+                description: 'Aruba OS Mobility Controllers (wireless)',
+            },
+            {
+                name: 'Aruba AOS-CX',
+                value: 'aruba_aoscx',
+                description: 'Aruba AOS-CX switches (modern campus)',
+            },
+            {
+                name: 'Ubiquiti EdgeSwitch',
+                value: 'ubiquiti_edgeswitch',
+                description: 'Ubiquiti EdgeSwitch series',
+            },
+            {
+                name: 'Ubiquiti EdgeRouter',
+                value: 'ubiquiti_edgerouter',
+                description: 'Ubiquiti EdgeRouter series (EdgeOS)',
+            },
+            {
+                name: 'Ubiquiti UniFi Switch',
+                value: 'ubiquiti_unifi',
+                description: 'Ubiquiti UniFi switches',
+            },
         ];
     }
 
@@ -301,9 +360,44 @@ export class ConnectionDispatcher {
                 output.includes('vrp') ||
                 output.includes('versatile routing platform') ||
                 output.includes('ne8000')
-              ) {
+            ) {
                 return 'huawei_vrp';
-              }
+            }
+
+            // Arista detection patterns
+            if (output.includes('arista') || output.includes('arista eos')) {
+                return 'arista_eos';
+            }
+
+            // HP ProCurve detection patterns
+            if (output.includes('procurve') || output.includes('hp switch')) {
+                return 'hp_procurve';
+            }
+
+            // Aruba detection patterns
+            if (output.includes('aruba')) {
+                if (output.includes('arubaos') || output.includes('mobility controller') || 
+                    output.includes('mobility master')) {
+                    return 'aruba_os';
+                } else if (output.includes('aos-cx') || output.includes('aoscx')) {
+                    return 'aruba_aoscx';
+                }
+                // Default to AOS-CX for modern Aruba switches
+                return 'aruba_aoscx';
+            }
+
+            // Ubiquiti detection patterns
+            if (output.includes('ubiquiti') || output.includes('ubnt')) {
+                if (output.includes('edgerouter') || output.includes('edgeos')) {
+                    return 'ubiquiti_edgerouter';
+                } else if (output.includes('edgeswitch')) {
+                    return 'ubiquiti_edgeswitch';
+                } else if (output.includes('unifi')) {
+                    return 'ubiquiti_unifi';
+                }
+                // Default to EdgeSwitch for unknown Ubiquiti devices
+                return 'ubiquiti_edgeswitch';
+            }
             
             return null; // Couldn't detect
             

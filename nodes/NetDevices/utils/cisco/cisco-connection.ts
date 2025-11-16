@@ -32,7 +32,7 @@ export class CiscoConnection extends BaseConnection {
         }
     }
 
-    private async createCiscoShellChannel(): Promise<void> {
+    protected async createCiscoShellChannel(): Promise<void> {
         return new Promise((resolve, reject) => {
             this.client.shell((err, channel) => {
                 if (err) {
@@ -92,7 +92,7 @@ export class CiscoConnection extends BaseConnection {
         this.configPrompt = this.basePrompt + '(config)#';
     }
 
-    private async checkAndEnterEnableMode(): Promise<void> {
+    protected async checkAndEnterEnableMode(): Promise<void> {
         // Check current prompt to see if we're already in enable mode
         await this.writeChannel(this.returnChar);
         const output = await this.readChannel(2000);
@@ -106,7 +106,7 @@ export class CiscoConnection extends BaseConnection {
         await this.enterEnableMode();
     }
 
-    private async enterEnableMode(): Promise<void> {
+    protected async enterEnableMode(): Promise<void> {
         try {
             await this.writeChannel('enable' + this.newline);
             
