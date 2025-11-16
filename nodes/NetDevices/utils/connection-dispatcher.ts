@@ -12,6 +12,9 @@ import { HuaweiConnection } from './huawei';
 import { AristaConnection } from './arista';
 import { HPProcurveConnection, ArubaOsConnection, ArubaAosCxConnection } from './hp';
 import { UbiquitiEdgeSwitchConnection, UbiquitiEdgeRouterConnection, UbiquitiUnifiSwitchConnection } from './ubiquiti';
+import { MikrotikRouterOsConnection, MikrotikSwitchOsConnection } from './mikrotik';
+import { ExtremeExosConnection } from './extreme';
+import { DellOS10Connection } from './dell';
 
 export type SupportedDeviceType =
     | 'cisco_ios'
@@ -37,7 +40,11 @@ export type SupportedDeviceType =
     | 'aruba_aoscx'
     | 'ubiquiti_edgeswitch'
     | 'ubiquiti_edgerouter'
-    | 'ubiquiti_unifi';
+    | 'ubiquiti_unifi'
+    | 'mikrotik_routeros'
+    | 'mikrotik_switchos'
+    | 'extreme_exos'
+    | 'dell_os10';
 
 export interface ConnectionClassMapping {
     [key: string]: typeof BaseConnection;
@@ -69,6 +76,10 @@ const CONNECTION_CLASS_MAPPING: ConnectionClassMapping = {
     'ubiquiti_edgeswitch': UbiquitiEdgeSwitchConnection,
     'ubiquiti_edgerouter': UbiquitiEdgeRouterConnection,
     'ubiquiti_unifi': UbiquitiUnifiSwitchConnection,
+    'mikrotik_routeros': MikrotikRouterOsConnection,
+    'mikrotik_switchos': MikrotikSwitchOsConnection,
+    'extreme_exos': ExtremeExosConnection,
+    'dell_os10': DellOS10Connection,
 };
 
 export class ConnectionDispatcher {
@@ -145,6 +156,10 @@ export class ConnectionDispatcher {
             'ubiquiti_edgeswitch': 'Ubiquiti EdgeSwitch',
             'ubiquiti_edgerouter': 'Ubiquiti EdgeRouter',
             'ubiquiti_unifi': 'Ubiquiti UniFi Switch',
+            'mikrotik_routeros': 'MikroTik RouterOS',
+            'mikrotik_switchos': 'MikroTik SwitchOS',
+            'extreme_exos': 'Extreme Networks ExtremeXOS',
+            'dell_os10': 'Dell EMC OS10',
         };
         
         return displayNames[deviceType.toLowerCase()] || deviceType;
@@ -276,6 +291,26 @@ export class ConnectionDispatcher {
                 value: 'ubiquiti_unifi',
                 description: 'Ubiquiti UniFi switches',
             },
+            {
+                name: 'MikroTik RouterOS',
+                value: 'mikrotik_routeros',
+                description: 'MikroTik routers (ISP/WISP)',
+            },
+            {
+                name: 'MikroTik SwitchOS',
+                value: 'mikrotik_switchos',
+                description: 'MikroTik switches',
+            },
+            {
+                name: 'Extreme Networks ExtremeXOS',
+                value: 'extreme_exos',
+                description: 'Extreme ExtremeXOS switches (campus/data center)',
+            },
+            {
+                name: 'Dell EMC OS10',
+                value: 'dell_os10',
+                description: 'Dell EMC OS10 switches (data center/campus)',
+            },
         ];
     }
 
@@ -397,6 +432,26 @@ export class ConnectionDispatcher {
                 }
                 // Default to EdgeSwitch for unknown Ubiquiti devices
                 return 'ubiquiti_edgeswitch';
+            }
+
+            // MikroTik detection patterns
+            if (output.includes('mikrotik') || output.includes('routeros')) {
+                if (output.includes('switchos')) {
+                    return 'mikrotik_switchos';
+                }
+                // Default to RouterOS
+                return 'mikrotik_routeros';
+            }
+
+            // Extreme Networks detection patterns
+            if (output.includes('extremexos') || output.includes('extreme networks') ||
+                output.includes('exos')) {
+                return 'extreme_exos';
+            }
+
+            // Dell OS10 detection patterns
+            if (output.includes('dell') && (output.includes('os10') || output.includes('dellos10'))) {
+                return 'dell_os10';
             }
             
             return null; // Couldn't detect

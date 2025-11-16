@@ -2,11 +2,11 @@
 
 ![npm version](https://img.shields.io/npm/v/n8n-nodes-netdevices)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Vendors](https://img.shields.io/badge/Vendors-13+-blue)
+![Vendors](https://img.shields.io/badge/Vendors-16+-blue)
 
 A powerful, TypeScript-based n8n custom node for managing network devices via SSH. Inspired by Python's Netmiko, this node brings robust network automation capabilities to your n8n workflows, allowing you to interact with a wide range of network infrastructure directly.
 
-**🎉 Now supports Arista, HP, Aruba, and Ubiquiti - including data center, campus, and edge networking equipment!**
+**🎉 Now supports MikroTik, Extreme Networks, Dell OS10 + Arista, HP, Aruba, and Ubiquiti - comprehensive coverage for ISP, data center, campus, and edge networks!**
 
 ---
 
@@ -46,23 +46,27 @@ The node supports a wide variety of network operating systems across multiple ve
 | | `Cisco NX-OS` | Cisco Nexus data center switches. |
 | | `Cisco ASA` | Cisco ASA firewall appliances. |
 | | `Cisco SG300` | Small business switch series. |
-| **Arista** 🆕 | `Arista EOS` | Arista EOS data center switches (leaf-spine, cloud-scale deployments). |
+| **Arista** | `Arista EOS` | Arista EOS data center switches (leaf-spine, cloud-scale deployments). |
 | **Juniper** | `Juniper JunOS` | Juniper routers and switches. |
 | | `Juniper SRX` | Juniper SRX series firewalls. |
+| **Dell EMC** 🆕 | `Dell OS10` | Dell EMC OS10 switches (PowerSwitch series, modern data center). |
+| **Extreme Networks** 🆕 | `Extreme ExtremeXOS` | Extreme Networks ExtremeXOS switches (campus and data center). |
 
 ### Enterprise Campus & Wireless
 
 | Vendor | Platform | Description |
 | :--- | :--- | :--- |
-| **HP** 🆕 | `HP ProCurve` | HP ProCurve switches (legacy campus switching). |
-| **Aruba** 🆕 | `Aruba OS` | Aruba OS Mobility Controllers (wireless LAN controllers). |
+| **HP** | `HP ProCurve` | HP ProCurve switches (legacy campus switching). |
+| **Aruba** | `Aruba OS` | Aruba OS Mobility Controllers (wireless LAN controllers). |
 | | `Aruba AOS-CX` | Aruba AOS-CX switches (modern campus switching platform). |
 
 ### SMB, Branch & ISP
 
 | Vendor | Platform | Description |
 | :--- | :--- | :--- |
-| **Ubiquiti** 🆕 | `Ubiquiti EdgeSwitch` | EdgeSwitch series (Cisco-like switches). |
+| **MikroTik** 🆕 | `MikroTik RouterOS` | MikroTik routers (ISP, WISP, and enterprise edge). |
+| | `MikroTik SwitchOS` | MikroTik switches (CRS series). |
+| **Ubiquiti** | `Ubiquiti EdgeSwitch` | EdgeSwitch series (Cisco-like switches). |
 | | `Ubiquiti EdgeRouter` | EdgeRouter series with EdgeOS (VyOS-based routing). |
 | | `Ubiquiti UniFi Switch` | UniFi managed switches. |
 | **VyOS** | `VyOS` | Open-source router and firewall platform. |
@@ -90,7 +94,7 @@ The node supports a wide variety of network operating systems across multiple ve
 | **Linux** | `Linux` | Standard Linux servers and network appliances. |
 | **Generic** | `Generic SSH` | Basic SSH connection for other compatible devices. |
 
-> 🆕 **Latest Update**: Added support for Arista EOS, HP ProCurve, Aruba (OS & AOS-CX), and Ubiquiti (EdgeSwitch, EdgeRouter, UniFi) - major expansion across data center, campus, and SMB networking!
+> 🆕 **Latest Update**: Added support for MikroTik (RouterOS/SwitchOS), Extreme Networks (ExtremeXOS), and Dell EMC (OS10) - expanding ISP, WISP, data center, and campus coverage!
 
 ## Core Operations
 
@@ -154,6 +158,30 @@ Managed switching for UniFi ecosystems:
 - **UniFi Integration**: Works alongside UniFi controller automation
 - **Simplified Management**: Perfect for UniFi network deployments
 - **Use Cases**: UniFi network automation, VLAN provisioning, port configuration
+
+### 🆕 MikroTik RouterOS/SwitchOS
+Powerful platform for ISPs and WISPs:
+- **Unique CLI**: Special handling for MikroTik's distinctive command structure
+- **License Prompt Management**: Automatically handles license agreement prompts on login
+- **Terminal Optimization**: Username-based terminal settings (`+ct511w4098h`) for optimal display
+- **Immediate Changes**: No config mode - changes take effect immediately
+- **Use Cases**: ISP CPE automation, WISP network management, hotspot provisioning, BGP configuration
+
+### 🆕 Extreme Networks ExtremeXOS
+Enterprise campus and data center switching:
+- **Dynamic Prompt Handling**: Manages incrementing prompt IDs (`hostname.1 #`, `hostname.2 #`)
+- **Unsaved Config Detection**: Recognizes `*` prefix indicating unsaved changes
+- **No Config Mode**: Direct command execution with immediate effect
+- **Prompt Suppression**: Automatically disables CLI prompting for smoother automation
+- **Use Cases**: Campus network automation, VLAN provisioning, switch stack management, policy configuration
+
+### 🆕 Dell EMC OS10
+Modern data center and campus switching:
+- **Cisco-Like CLI**: Familiar IOS-style commands for easy transition
+- **Linux Foundation**: Built on Linux - access shell with `system` commands
+- **Flexible Mode**: Works with or without enable mode
+- **Modern Platform**: Supports Dell PowerSwitch S-series and Z-series
+- **Use Cases**: Data center fabric automation, Open Networking deployments, Dell ecosystem integration
 
 ## Installation
 
@@ -221,6 +249,55 @@ For detailed guides on advanced configuration, please see:
     "name Engineering",
     "untagged 1-24"
   ]
+}
+```
+
+### MikroTik RouterOS - Interface Configuration
+```javascript
+// Configure MikroTik interfaces using RouterOS CLI
+{
+  "operation": "sendConfig",
+  "deviceType": "mikrotik_routeros",
+  "commands": [
+    "/interface ethernet set ether1 comment='WAN Link'",
+    "/ip address add address=192.168.1.1/24 interface=ether2",
+    "/ip firewall filter add chain=input action=accept connection-state=established"
+  ]
+}
+```
+
+### Extreme ExtremeXOS - Create VLAN
+```javascript
+// Create and configure VLAN on Extreme switch
+{
+  "operation": "sendConfig",
+  "deviceType": "extreme_exos",
+  "commands": [
+    "create vlan Engineering tag 100",
+    "configure vlan Engineering add ports 1-24",
+    "enable ipforwarding vlan Engineering"
+  ]
+}
+```
+
+### Dell OS10 - Interface and System Commands
+```javascript
+// Configure interface and run Linux system command
+{
+  "operation": "sendConfig",
+  "deviceType": "dell_os10",
+  "commands": [
+    "interface ethernet 1/1/1",
+    "description 'Uplink to Core'",
+    "no switchport",
+    "ip address 10.0.0.1/24"
+  ]
+}
+// Or execute Linux commands
+{
+  "operation": "sendCommand",
+  "deviceType": "dell_os10",
+  "command": "system \"df -h\""
 }
 ```
 
