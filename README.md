@@ -2,12 +2,11 @@
 
 ![npm version](https://img.shields.io/npm/v/n8n-nodes-netdevices)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Network Coverage](https://img.shields.io/badge/Market_Coverage-73%25-brightgreen)
 ![Vendors](https://img.shields.io/badge/Vendors-13+-blue)
 
 A powerful, TypeScript-based n8n custom node for managing network devices via SSH. Inspired by Python's Netmiko, this node brings robust network automation capabilities to your n8n workflows, allowing you to interact with a wide range of network infrastructure directly.
 
-**🎉 Now supports Arista, HP, Aruba, and Ubiquiti - covering ~73% of production network devices!**
+**🎉 Now supports Arista, HP, Aruba, and Ubiquiti - including data center, campus, and edge networking equipment!**
 
 ---
 
@@ -25,7 +24,7 @@ A powerful, TypeScript-based n8n custom node for managing network devices via SS
 
 ## Key Features
 
--   **Extensive Multi-Vendor Support**: Manage devices from Cisco, Arista, Juniper, HP, Aruba, Ubiquiti, Palo Alto, Fortinet, Ericsson, and more - covering **~73% of network devices** in production.
+-   **Extensive Multi-Vendor Support**: Manage devices from Cisco, Arista, Juniper, HP, Aruba, Ubiquiti, Palo Alto, Fortinet, Ericsson, and more across data center, campus, and edge deployments.
 -   **Secure Connections**: Utilizes the battle-tested `ssh2` library for secure and reliable SSH sessions.
 -   **Flexible Authentication**: Supports both password and SSH key-based authentication, including passphrase-protected keys.
 -   **Jump Host Support**: Securely connect to devices in enterprise environments through bastion servers.
@@ -91,7 +90,7 @@ The node supports a wide variety of network operating systems across multiple ve
 | **Linux** | `Linux` | Standard Linux servers and network appliances. |
 | **Generic** | `Generic SSH` | Basic SSH connection for other compatible devices. |
 
-> 🆕 **Latest Update**: Added support for Arista EOS, HP ProCurve, Aruba (OS & AOS-CX), and Ubiquiti (EdgeSwitch, EdgeRouter, UniFi) - expanding coverage to ~73% of network devices in production!
+> 🆕 **Latest Update**: Added support for Arista EOS, HP ProCurve, Aruba (OS & AOS-CX), and Ubiquiti (EdgeSwitch, EdgeRouter, UniFi) - major expansion across data center, campus, and SMB networking!
 
 ## Core Operations
 
