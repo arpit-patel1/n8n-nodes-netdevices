@@ -7,7 +7,7 @@
 
 A powerful, TypeScript-based n8n custom node for managing network devices via SSH. Inspired by Python's Netmiko, this node brings robust network automation capabilities to your n8n workflows, allowing you to interact with a wide range of network infrastructure directly.
 
-**🎉 Version 1.1 now supports Arista, HP, Aruba, and Ubiquiti - covering ~73% of production network devices!**
+**🎉 Now supports Arista, HP, Aruba, and Ubiquiti - covering ~73% of production network devices!**
 
 ---
 
@@ -91,7 +91,7 @@ The node supports a wide variety of network operating systems across multiple ve
 | **Linux** | `Linux` | Standard Linux servers and network appliances. |
 | **Generic** | `Generic SSH` | Basic SSH connection for other compatible devices. |
 
-> 🆕 **New in v1.1**: Added support for Arista EOS, HP ProCurve, Aruba (OS & AOS-CX), and Ubiquiti (EdgeSwitch, EdgeRouter, UniFi) - expanding coverage to ~73% of network devices in production!
+> 🆕 **Latest Update**: Added support for Arista EOS, HP ProCurve, Aruba (OS & AOS-CX), and Ubiquiti (EdgeSwitch, EdgeRouter, UniFi) - expanding coverage to ~73% of network devices in production!
 
 ## Core Operations
 
