@@ -15,6 +15,7 @@ import { UbiquitiEdgeSwitchConnection, UbiquitiEdgeRouterConnection, UbiquitiUni
 import { MikrotikRouterOsConnection, MikrotikSwitchOsConnection } from './mikrotik';
 import { ExtremeExosConnection } from './extreme';
 import { DellOS10Connection } from './dell';
+import { VersaFlexVNFConnection } from './versa';
 
 export type SupportedDeviceType =
     | 'cisco_ios'
@@ -44,7 +45,8 @@ export type SupportedDeviceType =
     | 'mikrotik_routeros'
     | 'mikrotik_switchos'
     | 'extreme_exos'
-    | 'dell_os10';
+    | 'dell_os10'
+    | 'versa_flexvnf';
 
 export interface ConnectionClassMapping {
     [key: string]: typeof BaseConnection;
@@ -80,6 +82,7 @@ const CONNECTION_CLASS_MAPPING: ConnectionClassMapping = {
     'mikrotik_switchos': MikrotikSwitchOsConnection,
     'extreme_exos': ExtremeExosConnection,
     'dell_os10': DellOS10Connection,
+    'versa_flexvnf': VersaFlexVNFConnection,
 };
 
 export class ConnectionDispatcher {
@@ -160,6 +163,7 @@ export class ConnectionDispatcher {
             'mikrotik_switchos': 'MikroTik SwitchOS',
             'extreme_exos': 'Extreme Networks ExtremeXOS',
             'dell_os10': 'Dell EMC OS10',
+            'versa_flexvnf': 'Versa FlexVNF',
         };
         
         return displayNames[deviceType.toLowerCase()] || deviceType;
@@ -311,6 +315,11 @@ export class ConnectionDispatcher {
                 value: 'dell_os10',
                 description: 'Dell EMC OS10 switches (data center/campus)',
             },
+            {
+                name: 'Versa FlexVNF',
+                value: 'versa_flexvnf',
+                description: 'Versa Networks FlexVNF (SD-WAN/NFV)',
+            },
         ];
     }
 
@@ -452,6 +461,11 @@ export class ConnectionDispatcher {
             // Dell OS10 detection patterns
             if (output.includes('dell') && (output.includes('os10') || output.includes('dellos10'))) {
                 return 'dell_os10';
+            }
+
+            // Versa Networks FlexVNF detection patterns
+            if (output.includes('versa') || output.includes('flexvnf')) {
+                return 'versa_flexvnf';
             }
             
             return null; // Couldn't detect

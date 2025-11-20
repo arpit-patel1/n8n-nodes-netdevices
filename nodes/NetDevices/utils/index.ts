@@ -11,6 +11,7 @@ export { FortinetConnection } from './fortinet';
 export { EricssonConnection, EricssonMinilinkConnection } from './ericsson';
 export { VyosConnection } from './vyos';
 export { HuaweiConnection } from './huawei';
+export { VersaFlexVNFConnection } from './versa';
 
 // Jump host connection
 export { JumpHostConnection } from './jump-host-connection';
