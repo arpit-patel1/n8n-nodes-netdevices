@@ -1158,6 +1158,17 @@ export class BaseConnection extends EventEmitter {
     }
 
     // Get optimized SSH algorithms for faster connection
+    /**
+     * Get optimized SSH algorithm configurations with fallbacks for legacy devices.
+     * 
+     * Includes support for older devices (Juniper, Cisco, etc.) that may require
+     * legacy algorithms like diffie-hellman-group-exchange-sha1, ssh-dss, etc.
+     * 
+     * The method returns multiple algorithm configurations that are tried in order:
+     * 1. Modern, secure algorithms
+     * 2. Legacy algorithms for older devices
+     * 3. Ultra-legacy fallback for very old equipment
+     */
     protected getOptimizedAlgorithms(): any[] {
         if (this.fastMode) {
             // Ultra-fast algorithms for speed-critical operations
@@ -1215,12 +1226,27 @@ export class BaseConnection extends EventEmitter {
 
             return [
                 primaryAlgorithms,
-                // Fallback for older systems
+                // Fallback for older systems (e.g., older Juniper, Cisco devices)
                 {
-                    serverHostKey: ['ssh-rsa'],
-                    cipher: ['aes128-cbc'],
-                    hmac: ['hmac-sha1'],
-                    kex: ['diffie-hellman-group1-sha1']
+                    serverHostKey: ['ssh-rsa', 'ssh-dss'],
+                    cipher: ['aes128-cbc', 'aes256-cbc', '3des-cbc', 'aes192-cbc'],
+                    hmac: ['hmac-sha1', 'hmac-sha1-96', 'hmac-md5'],
+                    kex: [
+                        'diffie-hellman-group-exchange-sha256',
+                        'diffie-hellman-group-exchange-sha1',
+                        'diffie-hellman-group14-sha1',
+                        'diffie-hellman-group1-sha1'
+                    ]
+                },
+                // Ultra-legacy fallback for very old devices
+                {
+                    serverHostKey: ['ssh-rsa', 'ssh-dss'],
+                    cipher: ['3des-cbc', 'aes128-cbc', 'aes256-cbc'],
+                    hmac: ['hmac-md5', 'hmac-sha1'],
+                    kex: [
+                        'diffie-hellman-group1-sha1',
+                        'diffie-hellman-group14-sha1'
+                    ]
                 }
             ];
         }
