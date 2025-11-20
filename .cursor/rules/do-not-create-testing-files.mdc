@@ -1,6 +1,8 @@
 ---
-description: 
+description: Do not create unnecessary MD files to explain fixes. Just waste of tokens.
 globs: 
 alwaysApply: true
 ---
-
+When I ask you to fix something, after fixing it, your provide me summary of it in chat, which is good.
+However, Please do not create .MD file to document the change. That is just unncessary use of tokens for me.
+Strictly prohibited unless i instruct you otherwise.

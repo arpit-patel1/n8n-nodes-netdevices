@@ -1165,9 +1165,15 @@ export class BaseConnection extends EventEmitter {
      * legacy algorithms like diffie-hellman-group-exchange-sha1, ssh-dss, etc.
      * 
      * The method returns multiple algorithm configurations that are tried in order:
-     * 1. Modern, secure algorithms
-     * 2. Legacy algorithms for older devices
-     * 3. Ultra-legacy fallback for very old equipment
+     * 1. Modern, secure algorithms (AES-GCM, CTR modes, strong KEX)
+     * 2. Legacy algorithms for older devices (includes blowfish, cast128)
+     * 3. Ultra-legacy fallback for very old equipment (includes arcfour/RC4)
+     * 
+     * Legacy ciphers added for compatibility:
+     * - blowfish-cbc: Older Juniper, Cisco devices
+     * - cast128-cbc: Some legacy equipment
+     * - arcfour/arcfour128/arcfour256: Very old devices (insecure, last resort)
+     * - 3des-cbc: Common legacy cipher
      */
     protected getOptimizedAlgorithms(): any[] {
         if (this.fastMode) {
@@ -1191,7 +1197,7 @@ export class BaseConnection extends EventEmitter {
                 cipher: [
                     'aes128-ctr', 'aes192-ctr', 'aes256-ctr',
                     'aes128-gcm@openssh.com', 'aes256-gcm@openssh.com',
-                    'aes128-cbc', 'aes192-cbc'
+                    'aes128-cbc', 'aes192-cbc', 'aes256-cbc'
                 ],
                 hmac: ['hmac-sha2-256', 'hmac-sha2-512', 'hmac-sha1'],
                 kex: [
@@ -1199,7 +1205,8 @@ export class BaseConnection extends EventEmitter {
                     'diffie-hellman-group16-sha512', 'diffie-hellman-group18-sha512',
                     'diffie-hellman-group14-sha256', 'ecdh-sha2-nistp256',
                     'diffie-hellman-group14-sha1'
-                ]
+                ],
+                compress: ['none', 'zlib@openssh.com', 'zlib']
             };
 
             // Password-based algorithms (more conservative)
@@ -1210,13 +1217,14 @@ export class BaseConnection extends EventEmitter {
                 ],
                 cipher: [
                     'aes128-ctr', 'aes192-ctr', 'aes256-ctr',
-                    'aes128-cbc', 'aes192-cbc'
+                    'aes128-cbc', 'aes192-cbc', 'aes256-cbc'
                 ],
                 hmac: ['hmac-sha2-256', 'hmac-sha1'],
                 kex: [
                     'diffie-hellman-group14-sha256', 'ecdh-sha2-nistp256',
                     'diffie-hellman-group14-sha1'
-                ]
+                ],
+                compress: ['none', 'zlib@openssh.com', 'zlib']
             };
 
             // Choose algorithm set based on authentication method
@@ -1229,8 +1237,18 @@ export class BaseConnection extends EventEmitter {
                 // Fallback for older systems (e.g., older Juniper, Cisco devices)
                 {
                     serverHostKey: ['ssh-rsa', 'ssh-dss'],
-                    cipher: ['aes128-cbc', 'aes256-cbc', '3des-cbc', 'aes192-cbc'],
-                    hmac: ['hmac-sha1', 'hmac-sha1-96', 'hmac-md5'],
+                    cipher: [
+                        'aes128-ctr',
+                        'aes192-ctr',
+                        'aes256-ctr',
+                        'aes128-cbc',
+                        'aes192-cbc',
+                        'aes256-cbc',
+                        '3des-cbc',
+                        'blowfish-cbc',
+                        'cast128-cbc'
+                    ],
+                    hmac: ['hmac-sha2-256', 'hmac-sha1', 'hmac-sha1-96', 'hmac-md5', 'hmac-md5-96'],
                     kex: [
                         'diffie-hellman-group-exchange-sha256',
                         'diffie-hellman-group-exchange-sha1',
@@ -1238,14 +1256,24 @@ export class BaseConnection extends EventEmitter {
                         'diffie-hellman-group1-sha1'
                     ]
                 },
-                // Ultra-legacy fallback for very old devices
+                // Ultra-legacy fallback for very old devices (including arcfour/RC4)
                 {
                     serverHostKey: ['ssh-rsa', 'ssh-dss'],
-                    cipher: ['3des-cbc', 'aes128-cbc', 'aes256-cbc'],
-                    hmac: ['hmac-md5', 'hmac-sha1'],
+                    cipher: [
+                        'aes128-cbc',
+                        'aes256-cbc',
+                        '3des-cbc',
+                        'blowfish-cbc',
+                        'cast128-cbc',
+                        'arcfour',
+                        'arcfour128',
+                        'arcfour256'
+                    ],
+                    hmac: ['hmac-md5', 'hmac-sha1', 'hmac-md5-96', 'hmac-sha1-96'],
                     kex: [
                         'diffie-hellman-group1-sha1',
-                        'diffie-hellman-group14-sha1'
+                        'diffie-hellman-group14-sha1',
+                        'diffie-hellman-group-exchange-sha1'
                     ]
                 }
             ];
