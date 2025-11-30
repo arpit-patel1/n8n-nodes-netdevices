@@ -4,9 +4,14 @@ globs:
 alwaysApply: true
 ---
 When the user says git push and publish, perform the following actions in order:
-	1.	Ensure there are no linting errors (e.g., run npm run lint and confirm it passes).
-	2.	Build the project using npm run build.
-	3.	Commit any pending changes and push to the main branch.
-	4.	Increment the patch version in package.json using npm version patch.
-	5.	Push commits and tags to Git: git push && git push --tags.
-	6.	Publish the package to npm using npm publish.
+	1.	Commit any pending changes and push to the main branch.
+	2.	Increment the patch version in package.json using npm version patch.
+	3.	Push commits and tags to Git: git push && git push --tags.
+
+Note: The GitHub Actions workflow (.github/workflows/release.yml) will automatically:
+	- Run linter (npm run lint)
+	- Build the project (npm run build)
+	- Create a GitHub Release with auto-generated release notes
+	- Publish the package to npm
+
+The manual steps of linting, building, and publishing to npm are no longer required as they are handled by the CI/CD pipeline.

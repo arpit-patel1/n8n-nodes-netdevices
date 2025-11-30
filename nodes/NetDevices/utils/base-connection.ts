@@ -1234,6 +1234,26 @@ export class BaseConnection extends EventEmitter {
 
             return [
                 primaryAlgorithms,
+                // Specific legacy fallback for older Juniper/Cisco devices (prioritizing blowfish/dh-group1)
+                {
+                    serverHostKey: ['ssh-rsa', 'ssh-dss'],
+                    cipher: [
+                        'blowfish-cbc',
+                        '3des-cbc',
+                        'aes128-cbc',
+                        'aes192-cbc',
+                        'aes256-cbc',
+                        'aes128-ctr',
+                        'aes192-ctr',
+                        'aes256-ctr'
+                    ],
+                    hmac: ['hmac-sha1', 'hmac-sha1-96', 'hmac-md5', 'hmac-md5-96'],
+                    kex: [
+                        'diffie-hellman-group1-sha1',
+                        'diffie-hellman-group14-sha1',
+                        'diffie-hellman-group-exchange-sha1'
+                    ]
+                },
                 // Fallback for older systems (e.g., older Juniper, Cisco devices)
                 {
                     serverHostKey: ['ssh-rsa', 'ssh-dss'],
